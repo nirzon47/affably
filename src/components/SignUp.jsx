@@ -11,17 +11,34 @@ import Typography from '@mui/material/Typography'
 import Container from '@mui/material/Container'
 import { ThemeProvider } from '@emotion/react'
 
-// import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth'
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth'
+import { useState } from 'react'
+import { toast } from 'react-toastify'
 
 const SignUp = (prop) => {
+	const [loading, setLoading] = useState(false)
 	const handleSubmit = (event) => {
 		event.preventDefault()
-		const data = new FormData(event.currentTarget)
-		console.log({
-			username: data.get('username'),
-			email: data.get('email'),
-			password: data.get('password'),
-		})
+
+		const auth = getAuth()
+		const signUpForm = new FormData(event.currentTarget)
+		setLoading(true)
+
+		createUserWithEmailAndPassword(
+			auth,
+			signUpForm.get('email'),
+			signUpForm.get('password')
+		)
+			.then((userCredential) => {
+				const user = userCredential.user
+				console.log(user)
+				toast.success('Signed up successfully')
+			})
+			.catch((error) => {
+				console.error(error)
+				toast.error(error.message)
+			})
+			.finally(() => setLoading(false))
 	}
 
 	return (
@@ -46,16 +63,6 @@ const SignUp = (prop) => {
 						noValidate
 						sx={{ mt: 1 }}
 					>
-						<TextField
-							margin='normal'
-							required
-							fullWidth
-							id='username'
-							label='Username'
-							name='username'
-							autoComplete='username'
-							autoFocus
-						/>
 						<TextField
 							margin='normal'
 							required
@@ -85,6 +92,7 @@ const SignUp = (prop) => {
 							fullWidth
 							variant='contained'
 							sx={{ mt: 3, mb: 2 }}
+							disabled={loading}
 						>
 							Sign In
 						</Button>
