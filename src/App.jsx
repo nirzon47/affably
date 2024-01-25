@@ -6,6 +6,7 @@ import { createTheme } from '@mui/material/styles'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
+import Layout from './components/Layout'
 
 const defaultTheme = createTheme({
 	palette: {
@@ -31,6 +32,16 @@ const router = createBrowserRouter([
 	{
 		path: '/signup',
 		element: <SignUp theme={defaultTheme} />,
+	},
+	{
+		path: '/dashboard',
+		element: <Layout theme={defaultTheme} />,
+		children: [
+			{
+				path: '/dashboard',
+				// element: <Dashboard />,
+			},
+		],
 	},
 ])
 
