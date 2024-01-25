@@ -5,27 +5,39 @@ import SignUp from './components/SignUp'
 import { createTheme } from '@mui/material/styles'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import { RouterProvider, createBrowserRouter } from 'react-router-dom'
+
+const defaultTheme = createTheme({
+	palette: {
+		mode: 'dark',
+		primary: {
+			main: '#FF8484',
+		},
+		secondary: {
+			main: '#D97398',
+		},
+		background: {
+			default: '#282828',
+			paper: '#282828',
+		},
+	},
+})
+
+const router = createBrowserRouter([
+	{
+		path: '/',
+		element: <SignIn theme={defaultTheme} />,
+	},
+	{
+		path: '/signup',
+		element: <SignUp theme={defaultTheme} />,
+	},
+])
 
 const App = () => {
-	const defaultTheme = createTheme({
-		palette: {
-			mode: 'dark',
-			primary: {
-				main: '#FF8484',
-			},
-			secondary: {
-				main: '#D97398',
-			},
-			background: {
-				default: '#282828',
-				paper: '#282828',
-			},
-		},
-	})
-
 	return (
 		<>
-			<SignUp theme={defaultTheme} />
+			<RouterProvider router={router}></RouterProvider>
 			<ToastContainer
 				position='top-right'
 				autoClose={5000}

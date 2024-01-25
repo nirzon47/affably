@@ -2,21 +2,37 @@ import Avatar from '@mui/material/Avatar'
 import Button from '@mui/material/Button'
 import CssBaseline from '@mui/material/CssBaseline'
 import TextField from '@mui/material/TextField'
-import Link from '@mui/material/Link'
 import Grid from '@mui/material/Grid'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Container from '@mui/material/Container'
 import { ThemeProvider } from '@mui/material/styles'
 
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
+import { Link as RouterLink } from 'react-router-dom'
+import { useState } from 'react'
+
 const SignIn = (prop) => {
+	const [loading, setLoading] = useState(false)
 	const handleSubmit = (event) => {
 		event.preventDefault()
-		const data = new FormData(event.currentTarget)
-		console.log({
-			email: data.get('email'),
-			password: data.get('password'),
-		})
+
+		const auth = getAuth()
+		const signInForm = new FormData(event.currentTarget)
+		setLoading(true)
+
+		signInWithEmailAndPassword(
+			auth,
+			signInForm.get('email'),
+			signInForm.get('password')
+		)
+			.then((userCredential) => {
+				console.log(userCredential)
+			})
+			.catch((error) => {
+				console.error(error)
+			})
+			.finally(() => setLoading(false))
 	}
 
 	return (
@@ -66,29 +82,19 @@ const SignIn = (prop) => {
 							fullWidth
 							variant='contained'
 							sx={{ mt: 3, mb: 2 }}
+							disabled={loading}
 						>
 							Sign In
 						</Button>
 						<Grid container>
-							<Grid item xs>
-								<Link
-									href='#'
-									variant='body2'
-									underline='none'
-									className='duration-500 hover:text-sky-500'
-								>
-									Forgot password?
-								</Link>
-							</Grid>
+							<Grid item xs />
 							<Grid item>
-								<Link
-									href='#'
-									variant='body2'
-									underline='none'
-									className='duration-500 hover:text-sky-500'
+								<RouterLink
+									to='/signUp'
+									className='duration-500 hover:text-sky-500 text-primary'
 								>
 									{"Don't have an account? Sign Up"}
-								</Link>
+								</RouterLink>
 							</Grid>
 						</Grid>
 					</Box>
