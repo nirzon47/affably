@@ -1,25 +1,31 @@
-import { getAuth } from 'firebase/auth'
+import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import Header from './Header'
 import { Outlet, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 const Layout = () => {
 	const navigate = useNavigate()
+	const [user, setUser] = useState(null)
 
 	useEffect(() => {
-		const auth = getAuth()
-		if (!auth.currentUser) {
-			navigate('/')
-			toast.error('Sign in first!')
-		}
+		onAuthStateChanged(getAuth(), (user) => {
+			if (user) {
+				setUser(user)
+			} else {
+				navigate('/')
+				toast.error('Please sign in first')
+			}
+		})
 	}, [])
 
 	return (
-		<div className='relative text-white'>
-			<Header />
-			<Outlet />
-		</div>
+		user && (
+			<div className='relative text-white'>
+				<Header />
+				<Outlet />
+			</div>
+		)
 	)
 }
 

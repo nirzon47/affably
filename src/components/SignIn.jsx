@@ -8,26 +8,34 @@ import Typography from '@mui/material/Typography'
 import Container from '@mui/material/Container'
 import { ThemeProvider } from '@mui/material/styles'
 
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
+import {
+	getAuth,
+	signInWithEmailAndPassword,
+	onAuthStateChanged,
+} from 'firebase/auth'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 
 const SignIn = (prop) => {
 	const [loading, setLoading] = useState(false)
+	const [user, setUser] = useState(null)
+
 	const navigate = useNavigate()
+	const auth = getAuth()
 
 	useEffect(() => {
-		const auth = getAuth()
-		if (auth.currentUser) {
-			navigate('/dashboard')
-		}
+		onAuthStateChanged(auth, (user) => {
+			if (user) {
+				setUser(user)
+				navigate('/dashboard')
+			}
+		})
 	}, [])
 
-	const handleSubmit = (event) => {
+	const handleSubmit = async (event) => {
 		event.preventDefault()
 
-		const auth = getAuth()
 		const signInForm = new FormData(event.currentTarget)
 		setLoading(true)
 
@@ -48,71 +56,73 @@ const SignIn = (prop) => {
 	}
 
 	return (
-		<ThemeProvider theme={prop.theme}>
-			<Container component='main' maxWidth='xs'>
-				<CssBaseline />
-				<Box
-					sx={{
-						marginTop: 8,
-						display: 'flex',
-						flexDirection: 'column',
-						alignItems: 'center',
-					}}
-				>
-					<Avatar src='/logo.png' sx={{ m: 1 }} />
-					<Typography component='h1' variant='h5'>
-						Sign in
-					</Typography>
+		!user && (
+			<ThemeProvider theme={prop.theme}>
+				<Container component='main' maxWidth='xs'>
+					<CssBaseline />
 					<Box
-						component='form'
-						onSubmit={handleSubmit}
-						noValidate
-						sx={{ mt: 1 }}
+						sx={{
+							marginTop: 8,
+							display: 'flex',
+							flexDirection: 'column',
+							alignItems: 'center',
+						}}
 					>
-						<TextField
-							margin='normal'
-							required
-							fullWidth
-							id='email'
-							label='Email Address'
-							name='email'
-							autoComplete='email'
-							autoFocus
-						/>
-						<TextField
-							margin='normal'
-							required
-							fullWidth
-							name='password'
-							label='Password'
-							type='password'
-							id='password'
-							autoComplete='current-password'
-						/>
-						<Button
-							type='submit'
-							fullWidth
-							variant='contained'
-							sx={{ mt: 3, mb: 2 }}
-							disabled={loading}
+						<Avatar src='/logo.png' sx={{ m: 1 }} />
+						<Typography component='h1' variant='h5'>
+							Sign in
+						</Typography>
+						<Box
+							component='form'
+							onSubmit={handleSubmit}
+							noValidate
+							sx={{ mt: 1 }}
 						>
-							Sign In
-						</Button>
-						<Grid container>
-							<Grid item xs />
-							<Grid item>
-								<RouterLink
-									to='/signUp'
-									className='duration-500 hover:text-sky-500 text-primary'
-								>
-									{"Don't have an account? Sign Up"}
-								</RouterLink>
+							<TextField
+								margin='normal'
+								required
+								fullWidth
+								id='email'
+								label='Email Address'
+								name='email'
+								autoComplete='email'
+								autoFocus
+							/>
+							<TextField
+								margin='normal'
+								required
+								fullWidth
+								name='password'
+								label='Password'
+								type='password'
+								id='password'
+								autoComplete='current-password'
+							/>
+							<Button
+								type='submit'
+								fullWidth
+								variant='contained'
+								sx={{ mt: 3, mb: 2 }}
+								disabled={loading}
+							>
+								Sign In
+							</Button>
+							<Grid container>
+								<Grid item xs />
+								<Grid item>
+									<RouterLink
+										to='/signUp'
+										className='duration-500 hover:text-sky-500 text-primary'
+									>
+										{"Don't have an account? Sign Up"}
+									</RouterLink>
+								</Grid>
 							</Grid>
-						</Grid>
+						</Box>
 					</Box>
-				</Box>
-			</Container>
-		</ThemeProvider>
+				</Container>
+			</ThemeProvider>
+		)
 	)
 }
 
