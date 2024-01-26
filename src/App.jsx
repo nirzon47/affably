@@ -7,6 +7,7 @@ import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import Layout from './components/Layout'
+import Dashboard from './components/Dashboard'
 
 const defaultTheme = createTheme({
 	palette: {
@@ -35,11 +36,11 @@ const router = createBrowserRouter([
 	},
 	{
 		path: '/dashboard',
-		element: <Layout theme={defaultTheme} />,
+		element: <Layout />,
 		children: [
 			{
 				path: '/dashboard',
-				// element: <Dashboard />,
+				element: <Dashboard />,
 			},
 		],
 	},

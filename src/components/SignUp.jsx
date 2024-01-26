@@ -11,10 +11,11 @@ import { ThemeProvider } from '@emotion/react'
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth'
 import { useState } from 'react'
 import { toast } from 'react-toastify'
-import { Link as RouterLink } from 'react-router-dom'
+import { Link as RouterLink, useNavigate } from 'react-router-dom'
 
 const SignUp = (prop) => {
 	const [loading, setLoading] = useState(false)
+	const navigate = useNavigate()
 	const handleSubmit = (event) => {
 		event.preventDefault()
 
@@ -31,6 +32,7 @@ const SignUp = (prop) => {
 				const user = userCredential.user
 				console.log(user)
 				toast.success('Signed up successfully')
+				navigate('/dashboard')
 			})
 			.catch((error) => {
 				console.error(error)

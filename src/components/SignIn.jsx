@@ -9,11 +9,21 @@ import Container from '@mui/material/Container'
 import { ThemeProvider } from '@mui/material/styles'
 
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
-import { Link as RouterLink } from 'react-router-dom'
-import { useState } from 'react'
+import { Link as RouterLink, useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { toast } from 'react-toastify'
 
 const SignIn = (prop) => {
 	const [loading, setLoading] = useState(false)
+	const navigate = useNavigate()
+
+	useEffect(() => {
+		const auth = getAuth()
+		if (auth.currentUser) {
+			navigate('/dashboard')
+		}
+	}, [])
+
 	const handleSubmit = (event) => {
 		event.preventDefault()
 
@@ -28,9 +38,11 @@ const SignIn = (prop) => {
 		)
 			.then((userCredential) => {
 				console.log(userCredential)
+				toast.success('Signed in successfully')
+				navigate('/dashboard')
 			})
 			.catch((error) => {
-				console.error(error)
+				toast.error(error.message)
 			})
 			.finally(() => setLoading(false))
 	}
