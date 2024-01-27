@@ -46,18 +46,37 @@ const Dashboard = () => {
 
 	return (
 		<div className='min-h-[calc(100vh-4rem)] md:min-h-[calc(100vh-4.5rem)] bg-content-bg p-6'>
-			{posts.map((post) => (
-				<div
-					key={post.id}
-					className='px-4 py-2 duration-200 bg-black bg-opacity-25 rounded-lg cursor-pointer hover:bg-opacity-50'
-				>
-					<h3 className='text-xl font-medium'>{post.title}</h3>
-					<div className='flex items-center justify-between text-sm opacity-85'>
-						<p>{post.poster}</p>
-						<p className='text-xs'>{getTime(post.timestamp.seconds)}</p>
+			<div className='flex flex-col max-w-xl gap-2 mx-auto mb-8'>
+				<input
+					type='text'
+					name='title'
+					id='title'
+					className='text-lg bg-black bg-opacity-15 input input-bordered'
+					placeholder='Title'
+				/>
+				<textarea
+					name='description'
+					id='description'
+					className='text-lg bg-black resize-none bg-opacity-15 textarea textarea-bordered'
+					placeholder='Description'
+				></textarea>
+			</div>
+			<div className='flex flex-col gap-2'>
+				{posts.map((post) => (
+					<div
+						key={post.id}
+						className='px-4 py-2 duration-200 bg-black bg-opacity-25 rounded-lg cursor-pointer hover:bg-opacity-50'
+					>
+						<h3 className='text-xl font-medium'>{post.title}</h3>
+						<div className='flex items-center justify-between text-sm opacity-85'>
+							<p>{post.poster}</p>
+							<p className='text-xs'>
+								{getTime(post.timestamp.seconds)}
+							</p>
+						</div>
 					</div>
-				</div>
-			))}
+				))}
+			</div>
 		</div>
 	)
 }

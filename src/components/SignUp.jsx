@@ -115,7 +115,6 @@ const SignUp = (prop) => {
 								label='PIN'
 								name='pin'
 								autoComplete='pin'
-								autoFocus
 							/>
 							<TextField
 								margin='normal'
@@ -125,7 +124,6 @@ const SignUp = (prop) => {
 								label='Email Address'
 								name='email'
 								autoComplete='email'
-								autoFocus
 							/>
 							<TextField
 								margin='normal'
