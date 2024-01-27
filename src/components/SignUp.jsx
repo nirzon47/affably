@@ -59,11 +59,13 @@ const SignUp = (prop) => {
 			.then((userCredential) => {
 				const user = userCredential.user
 				console.log(user)
+
 				addInformation(
 					user.uid,
 					signUpForm.get('username'),
 					signUpForm.get('pin')
 				)
+
 				toast.success('Signed up successfully')
 				navigate('/dashboard')
 			})
