@@ -13,9 +13,11 @@ import {
 	createUserWithEmailAndPassword,
 	onAuthStateChanged,
 } from 'firebase/auth'
+import { db } from '../utils/app'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
+import { collection, doc, setDoc } from 'firebase/firestore'
 
 const SignUp = (prop) => {
 	const [loading, setLoading] = useState(false)
@@ -37,6 +39,16 @@ const SignUp = (prop) => {
 
 		const auth = getAuth()
 		const signUpForm = new FormData(event.currentTarget)
+		const userRef = collection(db, 'Users')
+
+		const addInformation = async (id, username, pin) => {
+			await setDoc(doc(userRef, id), {
+				username: username,
+				pin: pin,
+				id: id,
+			})
+		}
+
 		setLoading(true)
 
 		createUserWithEmailAndPassword(
@@ -47,6 +59,11 @@ const SignUp = (prop) => {
 			.then((userCredential) => {
 				const user = userCredential.user
 				console.log(user)
+				addInformation(
+					user.uid,
+					signUpForm.get('username'),
+					signUpForm.get('pin')
+				)
 				toast.success('Signed up successfully')
 				navigate('/dashboard')
 			})
@@ -80,6 +97,26 @@ const SignUp = (prop) => {
 							noValidate
 							sx={{ mt: 1 }}
 						>
+							<TextField
+								margin='normal'
+								required
+								fullWidth
+								id='username'
+								label='User Name'
+								name='username'
+								autoComplete='username'
+								autoFocus
+							/>
+							<TextField
+								margin='normal'
+								required
+								fullWidth
+								id='pin'
+								label='PIN'
+								name='pin'
+								autoComplete='pin'
+								autoFocus
+							/>
 							<TextField
 								margin='normal'
 								required

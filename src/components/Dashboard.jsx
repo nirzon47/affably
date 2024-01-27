@@ -1,13 +1,20 @@
-import { collection, getDocs } from 'firebase/firestore'
+import { collection, doc, getDoc, getDocs } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
 import { db } from '../utils/app'
+import { getAuth } from 'firebase/auth'
 
 const Dashboard = () => {
 	const [posts, setPosts] = useState([])
+	const auth = getAuth()
 
 	const getPosts = async () => {
 		const docRef = collection(db, 'Posts')
 		const docSnap = await getDocs(docRef)
+
+		const user = auth.currentUser
+		const userRef = doc(db, 'Users', user.uid)
+		const userSnap = await getDoc(userRef)
+		console.log(userSnap.data())
 
 		const posts = []
 
