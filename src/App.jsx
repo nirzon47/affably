@@ -8,6 +8,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import Layout from './components/Layout'
 import Dashboard from './components/Dashboard'
+import Post from './components/Post'
 
 const defaultTheme = createTheme({
 	palette: {
@@ -41,6 +42,10 @@ const router = createBrowserRouter([
 			{
 				path: '/dashboard',
 				element: <Dashboard />,
+			},
+			{
+				path: '/dashboard/:id',
+				element: <Post />,
 			},
 		],
 	},

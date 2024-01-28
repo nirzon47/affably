@@ -3,12 +3,14 @@ import { useEffect, useState } from 'react'
 import { db } from '../utils/app'
 import { getAuth } from 'firebase/auth'
 import { nanoid } from 'nanoid'
+import { useNavigate } from 'react-router-dom'
 
 const Dashboard = () => {
-	const [posts, setPosts] = useState([])
 	const auth = getAuth()
-	const [userData, setUserData] = useState(null)
+	const navigate = useNavigate()
 
+	const [userData, setUserData] = useState(null)
+	const [posts, setPosts] = useState([])
 	const [title, setTitle] = useState('')
 	const [description, setDescription] = useState('')
 
@@ -51,8 +53,10 @@ const Dashboard = () => {
 		const posts = []
 
 		docSnap.forEach((doc) => {
-			posts.push(doc.data())
+			posts.unshift(doc.data())
 		})
+
+		posts.sort((a, b) => b.timestamp - a.timestamp)
 
 		setPosts(posts)
 	}
@@ -78,7 +82,14 @@ const Dashboard = () => {
 
 	return (
 		<div className='min-h-[calc(100vh-4rem)] md:min-h-[calc(100vh-4.5rem)] bg-content-bg p-6'>
-			<form className='flex flex-col max-w-xl gap-2 mx-auto mb-8'>
+			<form className='flex flex-col max-w-lg gap-2 mx-auto mb-4'>
+				<h3 className='text-sm text-slate-400'>
+					Welcome,{' '}
+					<span className='font-medium text-primary'>
+						{userData?.username}
+					</span>
+					. What is on your mind?
+				</h3>
 				<input
 					type='text'
 					name='title'
@@ -104,11 +115,13 @@ const Dashboard = () => {
 					Post
 				</button>
 			</form>
+			<div className='max-w-lg mx-auto h-[1px] bg-white opacity-10 mb-4'></div>
 			<div>
 				{posts.map((post) => (
 					<div
 						key={post.id}
 						className='max-w-lg px-4 py-2 mx-auto mb-2 duration-200 bg-black bg-opacity-25 rounded-lg cursor-pointer hover:bg-opacity-50'
+						onClick={() => navigate(`/dashboard/${post.id}`)}
 					>
 						<h3 className='text-xl font-medium'>{post.title}</h3>
 						<div className='flex items-center justify-between text-sm opacity-85'>
