@@ -13,8 +13,11 @@ const Dashboard = () => {
 
 	const [userData, setUserData] = useState(null)
 	const [posts, setPosts] = useState([])
+	const [filteredPosts, setFilteredPosts] = useState([])
 	const [title, setTitle] = useState('')
 	const [description, setDescription] = useState('')
+	const [showAll, setShowAll] = useState(false)
+	const [latest, setLatest] = useState(true)
 
 	const handlePostButton = async (e) => {
 		e.preventDefault()
@@ -57,17 +60,50 @@ const Dashboard = () => {
 			const userSnap = await getDoc(userRef)
 			setUserData(userSnap.data())
 
-			const posts = []
+			let posts = []
 
 			docSnap.forEach((doc) => {
 				posts.unshift(doc.data())
 			})
 
 			posts.sort((a, b) => b.timestamp - a.timestamp)
-
 			setPosts(posts)
+
+			const filteredPosts = posts.filter(
+				(post) => post.pin === userSnap.data().pin
+			)
+			setFilteredPosts(filteredPosts)
 		} catch (error) {
+			console.error(error)
 			toast.error(error.message)
+		}
+	}
+
+	const handleShowAll = () => {
+		setShowAll(!showAll)
+
+		if (showAll) {
+			const filteredPosts = posts.filter((post) => post.pin === userData.pin)
+
+			setFilteredPosts(filteredPosts)
+		} else {
+			setFilteredPosts(posts)
+		}
+	}
+
+	const handleOrder = () => {
+		setLatest(!latest)
+
+		if (latest) {
+			const sortedPosts = filteredPosts.sort(
+				(a, b) => a.timestamp - b.timestamp
+			)
+			setFilteredPosts(sortedPosts)
+		} else {
+			const sortedPosts = filteredPosts.sort(
+				(a, b) => b.timestamp - a.timestamp
+			)
+			setFilteredPosts(sortedPosts)
 		}
 	}
 
@@ -126,8 +162,30 @@ const Dashboard = () => {
 				</button>
 			</form>
 			<Divider />
+			<div className='flex justify-between max-w-lg mx-auto mb-4'>
+				<p
+					className='text-sm cursor-pointer tooltip'
+					onClick={handleShowAll}
+					data-tip={
+						!showAll
+							? 'Click to show all Posts'
+							: 'Click to show only posts for your PIN'
+					}
+				>
+					{showAll
+						? 'Showing all posts'
+						: 'Showing posts relevant to your PIN'}
+				</p>
+				<p
+					className='text-sm cursor-pointer tooltip'
+					data-tip={latest ? 'Click to see oldest' : 'Click to see latest'}
+					onClick={handleOrder}
+				>
+					{latest ? 'Sorting by latest' : 'Sorting by oldest'}
+				</p>
+			</div>
 			<div>
-				{posts.map((post) => (
+				{filteredPosts.map((post) => (
 					<div
 						key={post.id}
 						className='max-w-lg px-4 py-2 mx-auto mb-2 duration-200 bg-black bg-opacity-25 rounded-lg cursor-pointer hover:bg-opacity-50'
