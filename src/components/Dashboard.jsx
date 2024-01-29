@@ -4,6 +4,8 @@ import { db } from '../utils/app'
 import { getAuth } from 'firebase/auth'
 import { nanoid } from 'nanoid'
 import { useNavigate } from 'react-router-dom'
+import Divider from './Divider'
+import { toast } from 'react-toastify'
 
 const Dashboard = () => {
 	const auth = getAuth()
@@ -17,48 +19,56 @@ const Dashboard = () => {
 	const handlePostButton = async (e) => {
 		e.preventDefault()
 
-		const postRef = collection(db, 'Posts')
-		console.log({
-			title: title,
-			desc: description,
-			poster: userData.username,
-			pin: userData.pin,
-		})
+		try {
+			const postRef = collection(db, 'Posts')
+			console.log({
+				title: title,
+				desc: description,
+				poster: userData.username,
+				pin: userData.pin,
+			})
 
-		const id = nanoid()
+			const id = nanoid()
 
-		await setDoc(doc(postRef, id), {
-			title: title,
-			desc: description,
-			poster: userData.username,
-			pin: userData.pin,
-			timestamp: Date.now(),
-			id: id,
-		})
+			await setDoc(doc(postRef, id), {
+				title: title,
+				desc: description,
+				poster: userData.username,
+				pin: userData.pin,
+				timestamp: Date.now(),
+				id: id,
+			})
 
-		setTitle('')
-		setDescription('')
-		getPosts()
+			setTitle('')
+			setDescription('')
+			getPosts()
+		} catch (error) {
+			toast.error(error.message)
+		}
 	}
 
 	const getPosts = async () => {
-		const docRef = collection(db, 'Posts')
-		const docSnap = await getDocs(docRef)
+		try {
+			const docRef = collection(db, 'Posts')
+			const docSnap = await getDocs(docRef)
 
-		const user = auth.currentUser
-		const userRef = doc(db, 'Users', user.uid)
-		const userSnap = await getDoc(userRef)
-		setUserData(userSnap.data())
+			const user = auth.currentUser
+			const userRef = doc(db, 'Users', user.uid)
+			const userSnap = await getDoc(userRef)
+			setUserData(userSnap.data())
 
-		const posts = []
+			const posts = []
 
-		docSnap.forEach((doc) => {
-			posts.unshift(doc.data())
-		})
+			docSnap.forEach((doc) => {
+				posts.unshift(doc.data())
+			})
 
-		posts.sort((a, b) => b.timestamp - a.timestamp)
+			posts.sort((a, b) => b.timestamp - a.timestamp)
 
-		setPosts(posts)
+			setPosts(posts)
+		} catch (error) {
+			toast.error(error.message)
+		}
 	}
 
 	const getTime = (epochTime) => {
@@ -94,7 +104,7 @@ const Dashboard = () => {
 					type='text'
 					name='title'
 					id='title'
-					className='text-lg bg-black bg-opacity-15 input input-bordered'
+					className='text-lg bg-black bg-opacity-15 input'
 					placeholder='Title'
 					value={title}
 					onChange={(e) => setTitle(e.target.value)}
@@ -102,7 +112,7 @@ const Dashboard = () => {
 				<textarea
 					name='description'
 					id='description'
-					className='text-lg bg-black resize-none bg-opacity-15 textarea textarea-bordered'
+					className='text-lg bg-black resize-none bg-opacity-15 textarea'
 					placeholder='Description'
 					value={description}
 					onChange={(e) => setDescription(e.target.value)}
@@ -115,7 +125,7 @@ const Dashboard = () => {
 					Post
 				</button>
 			</form>
-			<div className='max-w-lg mx-auto h-[1px] bg-white opacity-10 mb-4'></div>
+			<Divider />
 			<div>
 				{posts.map((post) => (
 					<div

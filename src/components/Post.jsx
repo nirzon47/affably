@@ -1,8 +1,11 @@
-import { collection, getDocs } from 'firebase/firestore'
+import { collection, doc, getDoc, getDocs, setDoc } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { db } from '../utils/app'
 import { getAuth } from 'firebase/auth'
+import Divider from './Divider'
+import { nanoid } from 'nanoid'
+import { toast } from 'react-toastify'
 
 const Post = () => {
 	const params = useParams()
@@ -10,17 +13,26 @@ const Post = () => {
 
 	const [post, setPost] = useState()
 	const [comments, setComments] = useState([])
-	const user = getAuth().currentUser
-	console.log(user)
+	const [textarea, setTextarea] = useState('')
+
+	const userId = getAuth().currentUser.uid
 
 	const getPosts = async () => {
-		const postsCollectionRef = collection(db, 'Posts')
-		const querySnapshot = await getDocs(postsCollectionRef)
+		try {
+			const postRef = doc(db, 'Posts', id)
+			const querySnapshot = await getDoc(postRef)
 
-		querySnapshot.forEach(async (doc) => {
-			setPost(doc.data())
+			setPost(querySnapshot.data())
 
-			const commentsCollectionRef = collection(doc.ref, 'comments')
+			getComments()
+		} catch (error) {
+			toast.error(error.message)
+		}
+	}
+
+	const getComments = async () => {
+		try {
+			const commentsCollectionRef = collection(db, 'Posts', id, 'comments')
 			const commentsQuerySnapshot = await getDocs(commentsCollectionRef)
 
 			const comments = []
@@ -29,13 +41,59 @@ const Post = () => {
 			})
 
 			comments.sort((a, b) => b.timestamp - a.timestamp)
-			console.log(comments)
 			setComments(comments)
-		})
+		} catch (error) {
+			toast.error(error.message)
+		}
+	}
+
+	const handleAddComment = async (e) => {
+		e.preventDefault()
+
+		const commentRef = collection(db, 'Posts', id, 'comments')
+
+		try {
+			let user
+			await getDoc(doc(db, 'Users', userId)).then((userDoc) => {
+				user = userDoc.data()
+			})
+
+			const randomID = nanoid()
+
+			await setDoc(doc(commentRef, randomID), {
+				comment: textarea,
+				poster: user.username,
+				pin: user.pin,
+				timestamp: Date.now(),
+				id: randomID,
+			})
+
+			setTextarea('')
+			getComments()
+			toast.success('Comment added')
+		} catch (error) {
+			toast.error(error.message)
+		}
+	}
+
+	const getTime = (epochTime) => {
+		const date = new Date(epochTime)
+
+		// Extract date, hour, and minute components
+		const year = date.getFullYear()
+		const month = ('0' + (date.getMonth() + 1)).slice(-2)
+		const day = ('0' + date.getDate()).slice(-2)
+		const hour = ('0' + date.getHours()).slice(-2)
+		const minute = ('0' + date.getMinutes()).slice(-2)
+
+		const formattedDateTime = `${hour}:${minute}, ${day}-${month}-${year}`
+
+		return formattedDateTime
 	}
 
 	useEffect(() => {
 		getPosts()
+		getComments()
 	}, [])
 
 	return (
@@ -45,24 +103,45 @@ const Post = () => {
 					<h1 className='mb-4 text-3xl font-bold md:text-4xl'>
 						{post.title}
 					</h1>
-					<div className='h-[1px] bg-white opacity-10 mb-4'></div>
+					<Divider />
 					<p className='mb-4 font-medium'>{post.desc}</p>
-					<div className='h-[1px] bg-white opacity-10 mb-4'></div>
+					<Divider />
 					<h3 className='flex justify-between text-xl font-semibold text-gray-300'>
 						<span>Comments</span>
 						<span>{comments.length}</span>
 					</h3>
-					<form className='my-4'>
+					<form className='grid gap-2 my-4'>
 						<textarea
 							name='comment'
 							id='comment'
-							className='w-full bg-black resize-none textarea textarea-bordered bg-opacity-15'
+							className='w-full bg-black resize-none textarea bg-opacity-15'
 							placeholder='Add a new comment'
+							value={textarea}
+							onChange={(e) => setTextarea(e.target.value)}
 						></textarea>
-						<button className='px-4 py-2 mr-auto font-semibold duration-150 rounded-md bg-secondary hover:bg-opacity-90'>
+						<button
+							type='submit'
+							onClick={handleAddComment}
+							className='px-4 py-2 mr-auto font-semibold duration-150 rounded-md bg-secondary hover:bg-opacity-90'
+						>
 							Post Comment
 						</button>
 					</form>
+					{comments.map((comment) => (
+						<div key={comment.id} className='max-w-lg mx-auto mb-4'>
+							<div className='flex items-center justify-between text-xs opacity-85 mb-0.5'>
+								<p className='bg-black rounded-full bg-opacity-25 px-2 py-0.5'>
+									{comment.poster}
+								</p>
+								<p className='text-gray-400'>
+									{getTime(comment.timestamp)}
+								</p>
+							</div>
+							<h3 className='pl-2 text-lg font-medium'>
+								{comment.comment}
+							</h3>
+						</div>
+					))}
 				</div>
 			</div>
 		)
