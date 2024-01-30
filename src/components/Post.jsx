@@ -40,7 +40,7 @@ const Post = () => {
 				comments.push(commentDoc.data())
 			})
 
-			comments.sort((a, b) => b.timestamp - a.timestamp)
+			comments.sort((a, b) => a.timestamp - b.timestamp)
 			setComments(comments)
 		} catch (error) {
 			toast.error(error.message)
@@ -96,37 +96,37 @@ const Post = () => {
 		getComments()
 	}, [])
 
-	return (
-		post && (
-			<div className='min-h-[calc(100vh-4rem)] md:min-h-[calc(100vh-4.5rem)] bg-content-bg p-6'>
-				<div className='max-w-lg mx-auto'>
-					<h1 className='mb-4 text-3xl font-bold md:text-4xl'>
-						{post.title}
-					</h1>
-					<Divider />
-					<p className='mb-4 font-medium'>{post.desc}</p>
-					<Divider />
-					<h3 className='flex justify-between text-xl font-semibold text-gray-300'>
-						<span>Comments</span>
-						<span>{comments.length}</span>
-					</h3>
-					<form className='grid gap-2 my-4'>
-						<textarea
-							name='comment'
-							id='comment'
-							className='w-full bg-black resize-none textarea bg-opacity-15'
-							placeholder='Add a new comment'
-							value={textarea}
-							onChange={(e) => setTextarea(e.target.value)}
-						></textarea>
-						<button
-							type='submit'
-							onClick={handleAddComment}
-							className='px-4 py-2 mr-auto font-semibold duration-150 rounded-md bg-secondary hover:bg-opacity-90'
-						>
-							Post Comment
-						</button>
-					</form>
+	return post ? (
+		<div className='min-h-[calc(100vh-4rem)] md:min-h-[calc(100vh-4.5rem)] bg-content-bg p-6'>
+			<div className='max-w-lg mx-auto'>
+				<h1 className='mb-4 text-3xl font-bold md:text-4xl'>
+					{post.title}
+				</h1>
+				<Divider />
+				<p className='mb-4 font-medium'>{post.desc}</p>
+				<Divider />
+				<h3 className='flex justify-between text-xl font-semibold text-gray-300'>
+					<span>Comments</span>
+					<span>{comments.length}</span>
+				</h3>
+				<form className='grid gap-2 my-4'>
+					<textarea
+						name='comment'
+						id='comment'
+						className='w-full bg-black resize-none textarea bg-opacity-15'
+						placeholder='Add a new comment'
+						value={textarea}
+						onChange={(e) => setTextarea(e.target.value)}
+					></textarea>
+					<button
+						type='submit'
+						onClick={handleAddComment}
+						className='px-4 py-2 mr-auto font-semibold duration-150 rounded-md bg-secondary hover:bg-opacity-90'
+					>
+						Post Comment
+					</button>
+				</form>
+				<div className='mt-12'>
 					{comments.map((comment) => (
 						<div key={comment.id} className='max-w-lg mx-auto mb-4'>
 							<div className='flex items-center justify-between text-xs opacity-85 mb-0.5'>
@@ -137,14 +137,16 @@ const Post = () => {
 									{getTime(comment.timestamp)}
 								</p>
 							</div>
-							<h3 className='pl-2 text-lg font-medium'>
+							<h3 className='pl-2 text-sm font-medium md:text-base'>
 								{comment.comment}
 							</h3>
 						</div>
 					))}
 				</div>
 			</div>
-		)
+		</div>
+	) : (
+		<div className='min-h-[calc(100vh-4rem)] md:min-h-[calc(100vh-4.5rem)] bg-content-bg'></div>
 	)
 }
 

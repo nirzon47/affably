@@ -140,7 +140,7 @@ const Dashboard = () => {
 					type='text'
 					name='title'
 					id='title'
-					className='text-lg bg-black bg-opacity-15 input'
+					className='text-base bg-black md:text-lg bg-opacity-15 input'
 					placeholder='Title'
 					value={title}
 					onChange={(e) => setTitle(e.target.value)}
@@ -148,7 +148,7 @@ const Dashboard = () => {
 				<textarea
 					name='description'
 					id='description'
-					className='text-lg bg-black resize-none bg-opacity-15 textarea'
+					className='text-base bg-black resize-none md:text-lg bg-opacity-15 textarea'
 					placeholder='Description'
 					value={description}
 					onChange={(e) => setDescription(e.target.value)}
@@ -162,9 +162,9 @@ const Dashboard = () => {
 				</button>
 			</form>
 			<Divider />
-			<div className='flex justify-between max-w-lg mx-auto mb-4'>
+			<div className='flex items-center justify-between max-w-lg mx-auto mb-4'>
 				<p
-					className='text-sm cursor-pointer tooltip'
+					className='w-1/2 text-sm text-blue-300 cursor-pointer md:w-auto tooltip'
 					onClick={handleShowAll}
 					data-tip={
 						!showAll
@@ -177,7 +177,7 @@ const Dashboard = () => {
 						: 'Showing posts relevant to your PIN'}
 				</p>
 				<p
-					className='text-sm cursor-pointer tooltip'
+					className='w-1/2 text-sm text-blue-300 cursor-pointer md:w-auto tooltip'
 					data-tip={latest ? 'Click to see oldest' : 'Click to see latest'}
 					onClick={handleOrder}
 				>
@@ -191,7 +191,9 @@ const Dashboard = () => {
 						className='max-w-lg px-4 py-2 mx-auto mb-2 duration-200 bg-black bg-opacity-25 rounded-lg cursor-pointer hover:bg-opacity-50'
 						onClick={() => navigate(`/dashboard/${post.id}`)}
 					>
-						<h3 className='text-xl font-medium'>{post.title}</h3>
+						<h3 className='text-lg font-medium md:text-xl'>
+							{post.title}
+						</h3>
 						<div className='flex items-center justify-between text-sm opacity-85'>
 							<p>{post.poster}</p>
 							<p className='text-xs'>{getTime(post.timestamp)}</p>

@@ -1,9 +1,9 @@
 import LogOutButton from './LogOutButton'
 import { Link } from 'react-router-dom'
 
-const Header = () => {
+const Header = (prop) => {
 	return (
-		<header className='sticky top-0 h-16 p-2 bg-black md:h-[4.5rem] md:p-4 flex justify-between'>
+		<header className='sticky top-0 h-16 py-4 px-4 bg-black md:h-[4.5rem] md:py-4 md:px-48 flex justify-between'>
 			<Link to={'/dashboard'}>
 				<div className='flex items-center h-full'>
 					<img src='/logo.png' alt='logo' className='h-full' />
@@ -13,7 +13,7 @@ const Header = () => {
 					</h3>
 				</div>
 			</Link>
-			<LogOutButton />
+			{prop.logoutEnabled && <LogOutButton />}
 		</header>
 	)
 }

@@ -9,6 +9,7 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import Layout from './components/Layout'
 import Dashboard from './components/Dashboard'
 import Post from './components/Post'
+import About from './components/About'
 
 const defaultTheme = createTheme({
 	palette: {
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
 	{
 		path: '/signup',
 		element: <SignUp theme={defaultTheme} />,
+	},
+	{
+		path: '/about',
+		element: <About />,
 	},
 	{
 		path: '/dashboard',

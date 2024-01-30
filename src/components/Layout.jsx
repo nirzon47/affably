@@ -20,7 +20,7 @@ const Layout = () => {
 	return (
 		user && (
 			<div className='relative text-white'>
-				<Header />
+				<Header logoutEnabled={true} />
 				<Outlet />
 			</div>
 		)
