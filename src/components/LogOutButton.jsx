@@ -21,8 +21,9 @@ const LogOutButton = () => {
 
 	return (
 		<button
-			className='p-2 text-white duration-150 rounded-lg md:p-3 hover:bg-red-700 bg-error'
+			className='p-2 text-white duration-150 rounded-lg md:p-3 hover:bg-red-700 bg-error tooltip tooltip-bottom'
 			onClick={handleLogOut}
+			data-tip='Sign out'
 		>
 			<MdLogout className='text-xl' />
 		</button>
