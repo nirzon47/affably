@@ -17,7 +17,7 @@ import { db } from '../utils/app'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
-import { collection, doc, setDoc } from 'firebase/firestore'
+import { collection, doc, getDocs, setDoc } from 'firebase/firestore'
 
 const SignUp = (prop) => {
 	const [loading, setLoading] = useState(false)
@@ -34,12 +34,20 @@ const SignUp = (prop) => {
 		})
 	}, [])
 
-	const handleSubmit = (event) => {
+	const handleSubmit = async (event) => {
 		event.preventDefault()
 
 		const auth = getAuth()
 		const signUpForm = new FormData(event.currentTarget)
 		const userRef = collection(db, 'Users')
+		const userSnap = await getDocs(userRef)
+
+		userSnap.forEach((user) => {
+			if (user.data().username === signUpForm.get('username')) {
+				toast.error('Username already exists')
+				return
+			}
+		})
 
 		const addInformation = async (id, username, pin) => {
 			await setDoc(doc(userRef, id), {
