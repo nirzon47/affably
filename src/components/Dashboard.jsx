@@ -18,6 +18,7 @@ const Dashboard = () => {
 	const [description, setDescription] = useState('')
 	const [showAll, setShowAll] = useState(false)
 	const [latest, setLatest] = useState(true)
+	const [loading, setLoading] = useState(false)
 
 	const handlePostButton = async (e) => {
 		e.preventDefault()
@@ -51,6 +52,8 @@ const Dashboard = () => {
 	}
 
 	const getPosts = async () => {
+		setLoading(true)
+
 		try {
 			const docRef = collection(db, 'Posts')
 			const docSnap = await getDocs(docRef)
@@ -76,6 +79,8 @@ const Dashboard = () => {
 		} catch (error) {
 			console.error(error)
 			toast.error(error.message)
+		} finally {
+			setLoading(false)
 		}
 	}
 
@@ -184,6 +189,11 @@ const Dashboard = () => {
 					{latest ? 'Sorting by latest' : 'Sorting by oldest'}
 				</p>
 			</div>
+			{loading && (
+				<div className='grid place-content-center'>
+					<span className='loading loading-dots loading-lg'></span>
+				</div>
+			)}
 			<div>
 				{filteredPosts.map((post) => (
 					<div

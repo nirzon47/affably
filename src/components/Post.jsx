@@ -14,6 +14,7 @@ const Post = () => {
 	const [post, setPost] = useState()
 	const [comments, setComments] = useState([])
 	const [textarea, setTextarea] = useState('')
+	const [loading, setLoading] = useState(false)
 
 	const userId = getAuth().currentUser.uid
 
@@ -31,6 +32,8 @@ const Post = () => {
 	}
 
 	const getComments = async () => {
+		setLoading(true)
+
 		try {
 			const commentsCollectionRef = collection(db, 'Posts', id, 'comments')
 			const commentsQuerySnapshot = await getDocs(commentsCollectionRef)
@@ -44,6 +47,8 @@ const Post = () => {
 			setComments(comments)
 		} catch (error) {
 			toast.error(error.message)
+		} finally {
+			setLoading(false)
 		}
 	}
 
@@ -98,6 +103,11 @@ const Post = () => {
 
 	return post ? (
 		<div className='min-h-[calc(100vh-4rem)] md:min-h-[calc(100vh-4.5rem)] bg-content-bg p-6'>
+			{loading && (
+				<div className='grid place-content-center'>
+					<span className='loading loading-dots loading-lg'></span>
+				</div>
+			)}
 			<div className='max-w-lg mx-auto'>
 				<h1 className='mb-4 text-3xl font-bold md:text-4xl'>
 					{post.title}

@@ -1,15 +1,18 @@
 import './utils/app'
 
-import SignIn from './components/SignIn'
-import SignUp from './components/SignUp'
 import { createTheme } from '@mui/material/styles'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
+import { lazy, Suspense } from 'react'
 import Layout from './components/Layout'
-import Dashboard from './components/Dashboard'
-import Post from './components/Post'
-import About from './components/About'
+import Loader from './components/Loader'
+
+const SignIn = lazy(() => import('./components/SignIn'))
+const SignUp = lazy(() => import('./components/SignUp'))
+const About = lazy(() => import('./components/About'))
+const Dashboard = lazy(() => import('./components/Dashboard'))
+const Post = lazy(() => import('./components/Post'))
 
 const defaultTheme = createTheme({
 	palette: {
@@ -30,27 +33,51 @@ const defaultTheme = createTheme({
 const router = createBrowserRouter([
 	{
 		path: '/',
-		element: <SignIn theme={defaultTheme} />,
+		element: (
+			<Suspense fallback={<Loader />}>
+				<SignIn theme={defaultTheme} />
+			</Suspense>
+		),
 	},
 	{
 		path: '/signup',
-		element: <SignUp theme={defaultTheme} />,
+		element: (
+			<Suspense fallback={<Loader />}>
+				<SignUp theme={defaultTheme} />
+			</Suspense>
+		),
 	},
 	{
 		path: '/about',
-		element: <About />,
+		element: (
+			<Suspense fallback={<Loader />}>
+				<About />
+			</Suspense>
+		),
 	},
 	{
 		path: '/dashboard',
-		element: <Layout />,
+		element: (
+			<Suspense fallback={<Loader />}>
+				<Layout />
+			</Suspense>
+		),
 		children: [
 			{
 				path: '/dashboard',
-				element: <Dashboard />,
+				element: (
+					<Suspense fallback={<Loader />}>
+						<Dashboard />
+					</Suspense>
+				),
 			},
 			{
 				path: '/dashboard/:id',
-				element: <Post />,
+				element: (
+					<Suspense fallback={<Loader />}>
+						<Post />
+					</Suspense>
+				),
 			},
 		],
 	},
