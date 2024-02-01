@@ -1,9 +1,15 @@
 import LogOutButton from './LogOutButton'
 import { Link } from 'react-router-dom'
 
+/**
+ * A functional component for the Header.
+ *
+ * @param {type} prop - the props for the Header component
+ * @return {type} the Header component
+ */
 const Header = (prop) => {
 	return (
-		<header className='sticky top-0 h-16 py-4 px-4 bg-black bg-opacity-25 md:h-[4.5rem] md:py-4 md:px-48 flex justify-between items-center'>
+		<header className='sticky top-0 h-16 py-4 px-4 bg-[#1E1F28] md:h-[4.5rem] md:py-4 md:px-48 flex justify-between items-center z-20'>
 			<div>
 				<div className='flex items-center h-full md:items-end gap-x-6 md:gap-x-12'>
 					<Link to='/'>
@@ -31,6 +37,7 @@ const Header = (prop) => {
 					</nav>
 				</div>
 			</div>
+			{/* Prop to check if the log out button is enabled */}
 			{prop.logoutEnabled && <LogOutButton />}
 		</header>
 	)

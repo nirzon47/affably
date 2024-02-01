@@ -8,12 +8,14 @@ import { lazy, Suspense } from 'react'
 import Layout from './components/Layout'
 import Loader from './components/Loader'
 
+// Lazy loaded components
 const SignIn = lazy(() => import('./components/SignIn'))
 const SignUp = lazy(() => import('./components/SignUp'))
 const About = lazy(() => import('./components/About'))
 const Dashboard = lazy(() => import('./components/Dashboard'))
 const Post = lazy(() => import('./components/Post'))
 
+// Theme for mui
 const defaultTheme = createTheme({
 	palette: {
 		mode: 'dark',
@@ -30,6 +32,7 @@ const defaultTheme = createTheme({
 	},
 })
 
+// Router
 const router = createBrowserRouter([
 	{
 		path: '/',

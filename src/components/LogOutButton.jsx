@@ -4,12 +4,15 @@ import { toast } from 'react-toastify'
 import { MdLogout } from 'react-icons/md'
 
 const LogOutButton = () => {
-	const auth = getAuth()
-	const navigate = useNavigate()
+	const auth = getAuth() // Firebase auth
+	const navigate = useNavigate() // Router hook to navigate
 
+	/**
+	 * Function to handle user logout by navigating to the root page,
+	 * signing out the user, and displaying success or error toast messages.
+	 */
 	const handleLogOut = () => {
-		navigate('/')
-
+		// Signs out the user
 		signOut(auth)
 			.then(() => {
 				toast.success('Signed out successfully')
@@ -17,6 +20,9 @@ const LogOutButton = () => {
 			.catch((error) => {
 				toast.error(error.message)
 			})
+
+		// Navigates to the root page
+		navigate('/')
 	}
 
 	return (

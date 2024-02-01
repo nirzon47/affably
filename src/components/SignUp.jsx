@@ -7,7 +7,6 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Container from '@mui/material/Container'
 import { ThemeProvider } from '@emotion/react'
-
 import {
 	getAuth,
 	createUserWithEmailAndPassword,
@@ -20,11 +19,11 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom'
 import { collection, doc, getDocs, setDoc } from 'firebase/firestore'
 
 const SignUp = (prop) => {
-	const [loading, setLoading] = useState(false)
-	const [user, setUser] = useState(null)
+	const [loading, setLoading] = useState(false) // Flag to show loader
+	const [user, setUser] = useState(null) // Contains the user data after getting it from firebase
+	const navigate = useNavigate() // Router hook to navigate
 
-	const navigate = useNavigate()
-
+	// When the component mounts, check if the user is logged in, and get the user data from firebase
 	useEffect(() => {
 		onAuthStateChanged(getAuth(), (user) => {
 			if (user) {
@@ -34,14 +33,22 @@ const SignUp = (prop) => {
 		})
 	}, [])
 
+	/**
+	 * Asynchronously handles form submission, including user authentication and
+	 * signing up.
+	 *
+	 * @param {Event} event - The form submission event
+	 * @return {void}
+	 */
 	const handleSubmit = async (event) => {
 		event.preventDefault()
 
-		const auth = getAuth()
-		const signUpForm = new FormData(event.currentTarget)
-		const userRef = collection(db, 'Users')
-		const userSnap = await getDocs(userRef)
+		const auth = getAuth() // Firebase auth
+		const signUpForm = new FormData(event.currentTarget) // Form data
+		const userRef = collection(db, 'Users') // Refers to the 'Users' collection
+		const userSnap = await getDocs(userRef) // Gets all the users
 
+		// Iterating over the 'Users' collection to check if the username already exists
 		userSnap.forEach((user) => {
 			if (user.data().username === signUpForm.get('username')) {
 				toast.error('Username already exists')
@@ -49,6 +56,15 @@ const SignUp = (prop) => {
 			}
 		})
 
+		// Adds a new user to the 'Users' collection
+		/**
+		 * Adds information to the database for the given user.
+		 *
+		 * @param {string} id - The user's ID
+		 * @param {string} username - The user's username
+		 * @param {string} pin - The user's PIN
+		 * @return {Promise<void>} A promise that resolves when the information is added to the database
+		 */
 		const addInformation = async (id, username, pin) => {
 			await setDoc(doc(userRef, id), {
 				username: username,
@@ -59,6 +75,7 @@ const SignUp = (prop) => {
 
 		setLoading(true)
 
+		// Creates a new user with the given email and password
 		createUserWithEmailAndPassword(
 			auth,
 			signUpForm.get('email'),
@@ -68,6 +85,7 @@ const SignUp = (prop) => {
 				const user = userCredential.user
 				console.log(user)
 
+				// Makes a new sub collection in the 'Users' collection
 				addInformation(
 					user.uid,
 					signUpForm.get('username'),
@@ -75,6 +93,7 @@ const SignUp = (prop) => {
 				)
 
 				toast.success('Signed up successfully')
+				// Redirects the user to the dashboard
 				navigate('/dashboard')
 			})
 			.catch((error) => {

@@ -7,7 +7,6 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Container from '@mui/material/Container'
 import { ThemeProvider } from '@mui/material/styles'
-
 import {
 	getAuth,
 	signInWithEmailAndPassword,
@@ -18,12 +17,13 @@ import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 
 const SignIn = (prop) => {
-	const [loading, setLoading] = useState(false)
-	const [user, setUser] = useState(null)
+	const [loading, setLoading] = useState(false) // Flag to show loader
+	const [user, setUser] = useState(null) // Contains the user data after getting it from firebase
+	const navigate = useNavigate() // Router hook to navigate
+	const auth = getAuth() // Firebase auth
 
-	const navigate = useNavigate()
-	const auth = getAuth()
-
+	// When the component mounts, check if the user is logged in
+	// If they are logged in, redirect them to the dashboard
 	useEffect(() => {
 		onAuthStateChanged(auth, (user) => {
 			if (user) {
@@ -33,12 +33,19 @@ const SignIn = (prop) => {
 		})
 	}, [])
 
-	const handleSubmit = async (event) => {
-		event.preventDefault()
+	/**
+	 * Asynchronously handles form submission, signs in the user, and navigates to dashboard on success.
+	 *
+	 * @param {Event} event - the form submission event
+	 * @return {Promise} a Promise that resolves when the function completes
+	 */
+	const handleSubmit = async (e) => {
+		e.preventDefault()
 
-		const signInForm = new FormData(event.currentTarget)
-		setLoading(true)
+		const signInForm = new FormData(e.currentTarget) // Form data
+		setLoading(true) // Shows the loader
 
+		// Signs in the user
 		signInWithEmailAndPassword(
 			auth,
 			signInForm.get('email'),
@@ -47,6 +54,8 @@ const SignIn = (prop) => {
 			.then((userCredential) => {
 				console.log(userCredential)
 				toast.success('Signed in successfully')
+
+				// Navigates to dashboard
 				navigate('/dashboard')
 			})
 			.catch((error) => {
